@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Робот-этнохудожник «Элли» | 3D Профи 2026</title>
+  <style>
+    /* ===== БАЗОВЫЕ СТИЛИ ===== */
+    :root {
+      --cherry: #800020;
+      --cherry-dark: #5C0017;
+      --cherry-light: #A3324D;
+      --milk: #FDFBF7;
+      --milk-dark: #F2EBE1;
+      --text-dark: #2C1E22;
+      --text-gray: #6B5B5E;
+      --white: #FFFFFF;
+      --font: 'Inter', 'Segoe UI', Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    /* Плавная прокрутка */
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: var(--font);
+      color: var(--text-dark);
+      line-height: 1.6;
+      background: var(--milk);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+    .btn {
+      display: inline-block; padding: 14px 32px; border-radius: 8px;
+      font-weight: 600; font-size: 15px; transition: background .2s ease, border-color .2s ease, color .2s ease;
+      cursor: pointer; border: none;
+    }
+    .btn-primary { background: var(--cherry); color: var(--white); }
+    .btn-primary:hover { background: var(--cherry-dark); }
+    .btn-outline { background: transparent; color: var(--cherry); border: 2px solid var(--cherry); }
+    .btn-outline:hover { background: var(--cherry); color: var(--white); }
+
+    /* ===== НАВИГАЦИЯ (МЕНЮ В 2 СТРОКИ) ===== */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      background: rgba(253, 251, 247, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--milk-dark);
+      z-index: 1000;
+      padding: 10px 0;
+    }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    /* Левая часть (Логотип + Название) */
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: opacity 0.2s ease;
+    }
+    .nav-brand:hover {
+      opacity: 0.8;
+    }
+    .nav-brand img {
+      height: 40px;
+      width: auto;
+      display: block;
+    }
+    .nav-brand span {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--cherry);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Правая часть (Ссылки в 2 ряда) */
+    .nav-links {
+      display: grid;
+      grid-template-columns: repeat(8, auto); /* 8 колонок для 15 ссылок */
+      gap: 5px 15px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .nav-link {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      transition: color 0.2s;
+      padding: 2px 5px;
+      text-align: center;
+    }
+    .nav-link:hover {
+      color: var(--cherry);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative; padding: 180px 0 140px;
+      color: var(--white);
+      background-color: var(--text-dark); overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+      background-image: url('фон1.JPG');
+      background-size: cover; background-position: right center; background-repeat: no-repeat;
+      background-attachment: fixed; animation: fadeIn 1.5s ease-in-out;
+    }
+    .hero-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+      background: linear-gradient(90deg, rgba(44, 30, 34, 0.95) 0%, rgba(44, 30, 34, 0.85) 45%, rgba(44, 30, 34, 0.2) 100%);
+    }
+    .hero .container { position: relative; z-index: 2; animation: slideUp 1s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+    .hero h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 800; line-height: 1.1; margin-bottom: 20px; max-width: 800px; color: var(--milk); text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+    .hero .subtitle { font-size: clamp(16px, 2vw, 22px); color: #E6DFD9; margin-bottom: 16px; max-width: 650px; }
+    .hero .direction {
+      display: inline-block; background: rgba(255, 255, 255, 0.1); border: 1px solid var(--cherry-light);
+      color: var(--milk); padding: 6px 16px; border-radius: 4px; font-size: 13px; font-weight: 600;
+      margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(4px);
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 40px; }
+    .hero .btn-primary { background: var(--cherry); }
+    .hero .btn-primary:hover { background: var(--cherry-light); }
+    .hero .btn-outline { color: var(--milk); border-color: var(--milk); }
+    .hero .btn-outline:hover { background: var(--milk); color: var(--cherry); }
+
+    /* ===== СЕКЦИИ ===== */
+    section { padding: 80px 0; }
+    .section-title { font-size: clamp(26px, 3.5vw, 40px); font-weight: 800; margin-bottom: 16px; color: var(--text-dark); }
+    .section-subtitle { font-size: 18px; color: var(--text-gray); max-width: 700px; margin-bottom: 48px; }
+
+    /* ===== ЦИФРЫ ===== */
+    .numbers-section { background: var(--milk-dark); padding: 60px 0; }
+    .numbers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; text-align: center; }
+    .number-item .value { font-size: 48px; font-weight: 800; color: var(--cherry); line-height: 1; margin-bottom: 8px; }
+    .number-item .label { font-size: 15px; color: var(--text-gray); max-width: 220px; margin: 0 auto; }
+
+    /* ===== ИСТОРИЯ ===== */
+    .history { background: var(--white); border-top: 1px solid var(--milk-dark); border-bottom: 1px solid var(--milk-dark); }
+    .history-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .history-text h3 { font-size: 22px; font-weight: 700; margin-bottom: 16px; color: var(--cherry); }
+    .history-text p { font-size: 16px; color: var(--text-gray); margin-bottom: 16px; }
+    .history-img { border-radius: 12px; overflow: hidden; border: 1px solid var(--milk-dark); box-shadow: 0 10px 30px rgba(128, 0, 32, 0.1); }
+    .history-img img { width: 100%; height: auto; display: block; }
+
+    /* ===== ПРОБЛЕМА ===== */
+    .problem .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+    .stat-card { background: var(--white); padding: 32px 24px; border-radius: 12px; border: 1px solid var(--milk-dark); box-shadow: 0 4px 15px rgba(128, 0, 32, 0.03); }
+    .stat-card .stat-number { font-size: 40px; font-weight: 800; color: var(--cherry); line-height: 1; margin-bottom: 12px; }
+    .stat-card .stat-text { font-size: 15px; color: var(--text-gray); }
+
+    /* ===== РЕЗУЛЬТАТЫ ОПРОСОВ ===== */
+    .surveys-section { background: var(--milk-dark); }
+    .survey-img { 
+      max-width: 1000px; 
+      margin: 0 auto; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      border: 1px solid #dcd0c0; 
+      box-shadow: 0 10px 30px rgba(128, 0, 32, 0.1); 
+    }
+    .survey-img img { width: 100%; height: auto; display: block; }
+
+    /* ===== ТЕХНИКА ===== */
+    .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; margin-bottom: 60px; }
+    .tech-grid:last-child { margin-bottom: 0; }
+    .tech-text h3 { font-size: 24px; font-weight: 700; margin-bottom: 20px; color: var(--text-dark); }
+    .tech-text ul { list-style: none; }
+    .tech-text li { padding-left: 32px; position: relative; margin-bottom: 14px; font-size: 16px; color: var(--text-gray); }
+    .tech-text li::before { content: "✓"; position: absolute; left: 0; color: var(--cherry); font-weight: 800; font-size: 18px; }
+    .tech-img { border-radius: 12px; overflow: hidden; border: 1px solid var(--milk-dark); }
+    .tech-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ===== V2 ===== */
+    .v2-section { background: var(--milk-dark); padding: 40px; border-radius: 12px; margin-top: 40px; border-left: 6px solid var(--cherry); }
+    .v2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .v2-text h3 { color: var(--cherry); font-size: 24px; margin-bottom: 16px; }
+    .v2-text ul { list-style: none; }
+    .v2-text li { padding-left: 32px; position: relative; margin-bottom: 12px; font-size: 16px; color: var(--text-dark); }
+    .v2-text li::before { content: "→"; position: absolute; left: 0; color: var(--cherry); font-weight: 800; }
+    .v2-img { border-radius: 12px; overflow: hidden; border: 1px solid #dcd0c0; box-shadow: 0 8px 24px rgba(128, 0, 32, 0.1); }
+    .v2-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ===== ГАЛЕРЕЯ ===== */
+    .gallery-section { background: var(--white); }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 30px;
+    }
+    .gallery-item {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--milk-dark);
+      box-shadow: 0 8px 24px rgba(128, 0, 32, 0.08);
+      background: var(--milk);
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 350px; /* Фиксированная высота для ровной сетки */
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ===== УСТРОЙСТВО ПРИНТЕРА ===== */
+    .device-section { background: var(--milk-dark); }
+    .device-img { 
+      max-width: 900px; 
+      margin: 0 auto; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      border: 1px solid #dcd0c0; 
+      box-shadow: 0 10px 30px rgba(128, 0, 32, 0.1); 
+    }
+    .device-img img { width: 100%; height: auto; display: block; }
+
+    /* ===== СОФТ ===== */
+    .software { background: var(--milk-dark); }
+
+    /* ===== РЕЗУЛЬТАТЫ ===== */
+    .results-numbers { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 60px; }
+    .result-item { text-align: center; padding: 32px 24px; background: var(--white); border: 1px solid var(--milk-dark); border-radius: 12px; }
+    .result-item .value { font-size: 40px; font-weight: 800; color: var(--cherry); }
+    .result-item .label { font-size: 14px; color: var(--text-gray); margin-top: 8px; }
+
+    /* ===== ВИДЕО ===== */
+    .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 12px; overflow: hidden; margin-bottom: 60px; border: 1px solid var(--milk-dark); background: #000; }
+    .video-wrapper iframe, .video-wrapper video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: cover; }
+
+    .ornament-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; }
+    .ornament-gallery img { width: 100%; border-radius: 8px; border: 1px solid var(--milk-dark); }
+
+    /* ===== БУКЛЕТ ===== */
+    .booklet-section { background: var(--white); }
+    .booklet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .booklet-item { border-radius: 12px; overflow: hidden; border: 1px solid var(--milk-dark); box-shadow: 0 10px 30px rgba(128, 0, 32, 0.1); }
+    .booklet-item img { width: 100%; height: auto; display: block; }
+
+    /* ===== АЛГОРИТМ ===== */
+    .algorithm-section { background: var(--milk-dark); }
+    .algorithm-img { 
+      max-width: 800px; 
+      margin: 0 auto; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      border: 1px solid #dcd0c0; 
+      box-shadow: 0 10px 30px rgba(128, 0, 32, 0.1); 
+    }
+    .algorithm-img img { width: 100%; height: auto; display: block; }
+
+    /* ===== СПЕЦИФИКАЦИЯ ===== */
+    .spec-section { background: var(--white); }
+    .spec-img { 
+      max-width: 900px; 
+      margin: 0 auto; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      border: 1px solid var(--milk-dark); 
+      box-shadow: 0 10px 30px rgba(128, 0, 32, 0.1); 
+    }
+    .spec-img img { width: 100%; height: auto; display: block; }
+
+    /* ===== ЭКОНОМИКА ===== */
+    .economy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: stretch; }
+    .economy-card { background: var(--white); padding: 40px; border-radius: 12px; border: 1px solid var(--milk-dark); text-align: center; }
+    .economy-card.big { border: 2px solid var(--cherry); background: var(--white); }
+    .economy-card .price { font-size: 44px; font-weight: 800; color: var(--cherry); margin: 12px 0; }
+    .economy-card .desc { font-size: 15px; color: var(--text-gray); }
+
+    /* ===== ДОКУМЕНТЫ ===== */
+    .docs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+    .doc-card { background: var(--white); border: 1px solid var(--milk-dark); border-radius: 12px; padding: 32px 24px; text-align: center; transition: box-shadow .2s; }
+    .doc-card:hover { box-shadow: 0 8px 24px rgba(128, 0, 32, 0.08); }
+    .doc-icon { font-size: 40px; margin-bottom: 16px; }
+    .doc-card h4 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark); }
+    .doc-card p { font-size: 14px; color: var(--text-gray); margin-bottom: 20px; }
+
+    /* ===== КОМАНДА ===== */
+    .team { background: var(--milk-dark); }
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 60px; }
+    .team-member { text-align: center; background: var(--white); padding: 24px; border-radius: 12px; border: 1px solid var(--milk-dark); }
+    
+    /* Стили для аватарок */
+    .team-member .avatar {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: var(--cherry);
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: var(--milk);
+      overflow: hidden; 
+      border: 3px solid var(--white);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    /* Стили для картинки внутри аватарки */
+    .team-member .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; 
+      display: block;
+    }
+
+    .team-member h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .team-member span { font-size: 13px; color: var(--text-gray); }
+
+    .why-us { background: var(--cherry); border-radius: 12px; padding: 48px; }
+    .why-us h3 { color: var(--milk); font-size: 28px; font-weight: 800; margin-bottom: 24px; text-align: center; }
+    .why-list { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .why-list li { color: var(--milk); font-size: 16px; padding-left: 32px; position: relative; }
+    .why-list li::before { content: "→"; position: absolute; left: 0; font-weight: 800; color: var(--milk); }
+
+    /* ===== FOOTER ===== */
+    footer { background: var(--text-dark); color: #A89B9D; padding: 40px 0; font-size: 14px; text-align: center; }
+    footer a { color: var(--milk); text-decoration: underline; }
+    footer a:hover { color: var(--cherry-light); }
+
+    /* ===== АДАПТИВ ===== */
+    @media (max-width: 992px) {
+      .nav-container { flex-direction: column; gap: 10px; }
+      .nav-links { grid-template-columns: repeat(5, auto); justify-content: center; }
+    }
+
+    @media (max-width: 768px) {
+      section { padding: 60px 0; }
+      .tech-grid, .economy-grid, .history-grid, .v2-grid, .booklet-grid { grid-template-columns: 1fr; }
+      .v2-section { padding: 24px; }
+      .why-list { grid-template-columns: 1fr; }
+      .hero { padding: 200px 0 60px; background-color: var(--text-dark); }
+      .hero-bg { display: none; background-attachment: scroll; }
+      .hero-overlay { display: none; }
+      .hero-actions .btn { width: 100%; text-align: center; }
+      .numbers-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+      .nav-links { grid-template-columns: repeat(4, auto); }
+      .nav-link { font-size: 11px; padding: 2px; }
+      .gallery-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===== ЛАЙТБОКС ===== */
+    .lightbox {
+      display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.9); justify-content: center; align-items: center; cursor: zoom-out;
+      padding: 20px; backdrop-filter: blur(5px);
+    }
+    .lightbox.active { display: flex; animation: fadeIn 0.3s ease; }
+    .lightbox img {
+      max-width: 95%; max-height: 95vh; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      object-fit: contain; animation: zoomIn 0.3s ease;
+    }
+    @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    
+    /* Курсор для всех кликабельных картинок */
+    .clickable-img { cursor: pointer; transition: opacity 0.2s ease; }
+    .clickable-img:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+
+  <!-- НАВИГАЦИЯ -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      
+      <a href="#hero" class="nav-brand">
+        <img src="logo.png" alt="Логотип Эткер">
+        <span>Эткер</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#hero" class="nav-link">Главная</a>
+        <a href="#history" class="nav-link">История</a>
+        <a href="#problem" class="nav-link">Проблема</a>
+        <a href="#surveys" class="nav-link">Опросы</a>
+        <a href="#tech" class="nav-link">Техника</a>
+        <a href="#gallery" class="nav-link">Галерея</a>
+        <!-- ДОБАВЛЕНА ССЫЛКА -->
+        <a href="#printer-device" class="nav-link">Устройство</a>
+        <a href="#software" class="nav-link">Софт</a>
+        <a href="#results" class="nav-link">Результаты</a>
+        <a href="#booklet" class="nav-link">Буклет</a>
+        <a href="#algorithm" class="nav-link">Алгоритм</a>
+        <a href="#spec" class="nav-link">Спецификация</a>
+        <a href="#economy" class="nav-link">Экономика</a>
+        <a href="#docs" class="nav-link">Документы</a>
+        <a href="#team" class="nav-link">Команда</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="container">
+      <span class="direction">Направление: Робототехника / Импортозамещение</span>
+      <h1>Робот-этнохудожник «Элли»</h1>
+      <p class="subtitle">Автоматизированный плоттер с ЧПУ для воспроизведения народных орнаментов</p>
+      <p class="subtitle" style="font-size: 16px;">Цифровое сохранение культурного наследия через 3D-печать, реверс-инжиниринг и собственное ПО</p>
+      <div class="hero-actions">
+        <a href="презентация.pptx" class="btn btn-primary" download>Скачать презентацию (PPTX)</a>
+        <a href="описание краткое.docx" class="btn btn-outline" download>Скачать краткое описание</a>
+        <a href="описание полное.docx" class="btn btn-outline" download>Скачать полное описание</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ЦИФРЫ -->
+  <section class="numbers-section">
+    <div class="container">
+      <div class="numbers-grid">
+        <div class="number-item"><div class="value">0,2 мм</div><div class="label">Средняя точность позиционирования</div></div>
+        <div class="number-item"><div class="value">81,7%</div><div class="label">Узнаваемость орнаментов зрителями</div></div>
+        <div class="number-item"><div class="value">32 мин</div><div class="label">Непрерывная работа без сбоев</div></div>
+        <div class="number-item"><div class="value">3 530 ₽</div><div class="label">Себестоимость прототипа</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ИСТОРИЯ -->
+  <section class="history" id="history">
+    <div class="container">
+      <h2 class="section-title">История названия «Элли»</h2>
+      <p class="section-subtitle">Двойная смысловая нагрузка: от инженерии до культурного кода.</p>
+      <div class="history-grid">
+        <div class="history-text">
+          <h3>Инженерная и культурная связь</h3>
+          <p><strong>Инженерная:</strong> С греческого языка «Элли» переводится как «мастер». Это полностью отражает суть проекта — робот-мастер, создающий узоры.</p>
+          <p><strong>Культурная:</strong> «Элли» — это чувашское имя. Проект назван в честь выдающегося чувашского художника <strong>Элли Михайловича Юрьева</strong> (автора современного герба Чувашской Республики). Таким образом, робот становится символическим продолжением традиций национального изобразительного искусства.</p>
+        </div>
+        <div class="history-img">
+          <img src="история элли.JPG" alt="Элли Михайлович Юрьев" class="clickable-img">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ПРОБЛЕМА -->
+  <section class="problem" id="problem">
+    <div class="container">
+      <h2 class="section-title">Проблема и актуальность</h2>
+      <p class="section-subtitle">Разрыв между увлечением школьников робототехникой и их интересом к культурному наследию.</p>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number">68%</div><div class="stat-text">не знают ни одного народного орнамента</div></div>
+        <div class="stat-card"><div class="stat-number">84%</div><div class="stat-text">заинтересовались идеей робота-этнохудожника</div></div>
+        <div class="stat-card"><div class="stat-number">76%</div><div class="stat-text">предпочитают интерактив с техникой лекциям</div></div>
+        <div class="stat-card"><div class="stat-number">85%</div><div class="stat-text">увлекаются робототехникой и 3D-печатью</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ОПРОСЫ -->
+  <section class="surveys-section" id="surveys">
+    <div class="container">
+      <h2 class="section-title">Результаты опросов</h2>
+      <p class="section-subtitle">Разрыв между технологиями и культурой: данные исследования среди 56 учащихся.</p>
+      
+      <div class="survey-img">
+        <img src="опросы.JPG" alt="Результаты опросов и инфографика" class="clickable-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- ТЕХНИКА -->
+  <section id="tech">
+    <div class="container">
+      <h2 class="section-title">Техническая реализация</h2>
+      <p class="section-subtitle">Реверс-инжиниринг вышедшего из строя станка DOBOT MOOZ Plus и создание робота.</p>
+      
+      <div class="tech-grid">
+        <div class="tech-img">
+          <img src="станок до.JPG" alt="Сломанный станок" class="clickable-img">
+        </div>
+        <div class="tech-text">
+          <h3>Что было</h3>
+          <ul>
+            <li>Сломанные модули 3D-печати и лазерной гравировки</li>
+            <li>Ремонт признан нецелесообразным</li>
+            <li>Учебная станция подлежала списанию</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-grid" style="direction: rtl;">
+        <div class="tech-img" style="direction: ltr;">
+          <img src="элли элли.JPG" alt="Робот Элли Версия 1.0" class="clickable-img">
+        </div>
+        <div class="tech-text" style="direction: ltr;">
+          <h3>Что стало (Версия 1.0)</h3>
+          <ul>
+            <li>Сохранена штатная электроника (точность до 0,02 мм)</li>
+            <li>Механическая часть переработана в КОМПАС-3D и напечатана</li>
+            <li>PETG — для несущих узлов, PLA — для декора и мелочей</li>
+            <li>Собственный пишущий модуль и магнитный держатель бумаги</li>
+            <li>Декоративные элементы с чувашской символикой</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="v2-section">
+        <div class="v2-grid">
+          <div class="v2-text">
+            <h3>Развитие проекта: Версия 2.0</h3>
+            <ul>
+              <li><strong>Универсальность:</strong> Робот способен рисовать практически на любой поверхности и с любой плотностью (бумага, картон, дерево), а также использовать различные пишущие инструменты.</li>
+              <li><strong>Расширение библиотеки:</strong> Добавление узоров и орнаментов всех народов России (не только чувашских, русских и татарских).</li>
+              <li><strong>Смена стиля:</strong> Возможность разработки второго робота в другом национальном стиле (например, «Народы Татарстана» или «Народы Мордовии»).</li>
+            </ul>
+          </div>
+          <div class="v2-img">
+            <img src="робот элли2.JPG" alt="Робот Элли Версия 2.0" class="clickable-img">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ГАЛЕРЕЯ -->
+  <section class="gallery-section" id="gallery">
+    <div class="container">
+      <h2 class="section-title">Галерея</h2>
+      <p class="section-subtitle">Фотографии процесса создания и готовых элементов робота.</p>
+      
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="принтер1.JPG" alt="Принтер в работе" class="clickable-img">
+        </div>
+        <div class="gallery-item">
+          <img src="принтер2.JPG" alt="Печать деталей" class="clickable-img">
+        </div>
+        <div class="gallery-item">
+          <img src="принтер3.JPG" alt="Готовые детали" class="clickable-img">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- УСТРОЙСТВО ПРИНТЕРА -->
+  <section class="device-section" id="printer-device">
+    <div class="container">
+      <h2 class="section-title">Устройство принтера</h2>
+      <p class="section-subtitle">Детальное строение и конструктивные особенности 3D-принтера, используемого для создания робота.</p>
+      
+      <div class="device-img">
+        <!-- Файл должен называться устройство.JPG -->
+        <img src="устройство.JPG" alt="Устройство 3D-принтера" class="clickable-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- СОФТ -->
+  <section class="software" id="software">
+    <div class="container">
+      <h2 class="section-title">Программное обеспечение</h2>
+      <p class="section-subtitle">Собственный модуль на Python для преобразования изображений в G-code</p>
+      <div class="tech-grid">
+        <div class="tech-img">
+          <img src="интерфейс.JPG" alt="Интерфейс программы" class="clickable-img">
+        </div>
+        <div class="tech-text">
+          <h3>Как это работает</h3>
+          <ul>
+            <li>Загрузка растрового изображения (PNG, JPG, BMP)</li>
+            <li>Автоматическое определение цветов (OpenCV, NumPy)</li>
+            <li>Настройка параметров: размер, штриховка, заливка</li>
+            <li>Генерация и оптимизация траекторий (G-code)</li>
+            <li>Собственный интерфейс на PyQt6</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- РЕЗУЛЬТАТЫ -->
+  <section id="results">
+    <div class="container">
+      <h2 class="section-title">Результаты испытаний</h2>
+      <p class="section-subtitle">Прототип работает и подтверждает заявленные характеристики</p>
+      
+      <div class="results-numbers">
+        <div class="result-item"><div class="value">0,2 мм</div><div class="label">Средняя точность</div></div>
+        <div class="result-item"><div class="value">81,7%</div><div class="label">Узнаваемость</div></div>
+        <div class="result-item"><div class="value">32 мин</div><div class="label">Без сбоев</div></div>
+        <div class="result-item"><div class="value">4,3 / 5</div><div class="label">Оценка зрителей</div></div>
+      </div>
+
+      <div class="video-wrapper">
+        <iframe 
+          src="https://rutube.ru/play/embed/3be2039b5f20b8978ce09d7b2bbc6959/?p=yGy6ncXuQwi7VT-k-VcpnA&r=a" 
+          frameBorder="0" 
+          allow="clipboard-write; autoplay" 
+          webkitAllowFullScreen 
+          mozallowfullscreen 
+          allowFullScreen>
+        </iframe>
+      </div>
+
+      <div class="ornament-gallery">
+        <img src="ч1.JPG" alt="Чувашский орнамент 1" class="clickable-img">
+        <img src="ч2.JPG" alt="Чувашский орнамент 2" class="clickable-img">
+        <img src="р1.JPG" alt="Русский орнамент 1" class="clickable-img">
+        <img src="р2.JPG" alt="Русский орнамент 2" class="clickable-img">
+        <img src="т1.JPG" alt="Татарский орнамент 1" class="clickable-img">
+        <img src="т2.JPG" alt="Татарский орнамент 2" class="clickable-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- БУКЛЕТ -->
+  <section class="booklet-section" id="booklet">
+    <div class="container">
+      <h2 class="section-title">Информационный буклет</h2>
+      <p class="section-subtitle">«Чувашский орнамент в 3D» — печатное пособие, разработанное в рамках проекта.</p>
+      <div class="booklet-grid">
+        <div class="booklet-item">
+          <img src="буклет1.JPG" alt="Буклет. Лицевая сторона" class="clickable-img">
+        </div>
+        <div class="booklet-item">
+          <img src="буклет2.JPG" alt="Буклет. Внутренняя сторона" class="clickable-img">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- АЛГОРИТМ -->
+  <section class="algorithm-section" id="algorithm">
+    <div class="container">
+      <h2 class="section-title">Алгоритм работы робота</h2>
+      <p class="section-subtitle">Полный цикл: от загрузки изображения до готового орнамента на бумаге.</p>
+      <div class="algorithm-img">
+        <img src="алгоритм.JPG" alt="Алгоритм работы робота" class="clickable-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- СПЕЦИФИКАЦИЯ -->
+  <section class="spec-section" id="spec">
+    <div class="container">
+      <h2 class="section-title">Спецификация</h2>
+      <p class="section-subtitle">Перечень конструктивных элементов, узлов и материалов, используемых в роботе.</p>
+      <div class="spec-img">
+        <img src="спецификация.JPG" alt="Спецификация деталей робота" class="clickable-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- ЭКОНОМИКА -->
+  <section class="software" id="economy">
+    <div class="container">
+      <h2 class="section-title">Экономика и тиражирование</h2>
+      <p class="section-subtitle">Проект доступен для школ и центров дополнительного образования</p>
+      <div class="economy-grid">
+        <div class="economy-card">
+          <div class="desc">Профессиональная разработка</div>
+          <div class="price">15 000 – 20 000 ₽</div>
+          <div class="desc">Стоимость аналогичного продукта у команды специалистов (без учёта материалов)</div>
+        </div>
+        <div class="economy-card big">
+          <div class="desc">Наша себестоимость прототипа</div>
+          <div class="price">3 530 ₽</div>
+          <div class="desc">Материалы + электроэнергия + амортизация. При тиражировании — до 2 800–3 000 ₽</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ДОКУМЕНТЫ -->
+  <section id="docs">
+    <div class="container">
+      <h2 class="section-title">Документация проекта</h2>
+      <p class="section-subtitle">Все материалы открыты для изучения и тиражирования</p>
+      <div class="docs-grid">
+        <div class="doc-card">
+          <div class="doc-icon">📄</div>
+          <h4>Презентация (PPTX)</h4>
+          <p>10 слайдов для заявки на чемпионат</p>
+          <a href="презентация.pptx" class="btn btn-primary" style="font-size:14px; padding:10px 24px;" download>Скачать</a>
+        </div>
+        <div class="doc-card">
+          <div class="doc-icon">📝</div>
+          <h4>Описание краткое (DOCX)</h4>
+          <p>5 страниц, Times New Roman, 12 пт</p>
+          <a href="описание краткое.docx" class="btn btn-primary" style="font-size:14px; padding:10px 24px;" download>Скачать</a>
+        </div>
+        <div class="doc-card">
+          <div class="doc-icon">📚</div>
+          <h4>Описание полное (DOCX)</h4>
+          <p>28 страниц: теория, испытания, расчёты</p>
+          <a href="описание полное.docx" class="btn btn-primary" style="font-size:14px; padding:10px 24px;" download>Скачать</a>
+        </div>
+        <div class="doc-card">
+          <div class="doc-icon">📐</div>
+          <h4>Конструкторская документация</h4>
+          <p>62 чертежа, КОМПАС-3D, спецификации</p>
+          <a href="Конструкторская документация.pdf" class="btn btn-primary" style="font-size:14px; padding:10px 24px;" download>Скачать</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- КОМАНДА -->
+  <section class="team" id="team">
+    <div class="container">
+      <h2 class="section-title">Команда</h2>
+      <p class="section-subtitle">ГАНОУ «Центр одарённых детей и молодёжи «Эткер», г. Чебоксары</p>
+      <div class="team-grid">
+        
+        <div class="team-member">
+          <div class="avatar">
+            <img src="avatar1.JPG" alt="Иванов Егор" class="clickable-img">
+          </div>
+          <h4>Иванов Егор</h4>
+          <span>11 класс</span>
+        </div>
+
+        <div class="team-member">
+          <div class="avatar">
+            <img src="avatar2.JPG" alt="Миронов Александр" class="clickable-img">
+          </div>
+          <h4>Миронов Александр</h4>
+          <span>11 класс</span>
+        </div>
+
+        <div class="team-member">
+          <div class="avatar">
+            <img src="avatar3.JPG" alt="Плахин Илья" class="clickable-img">
+          </div>
+          <h4>Плахин Илья</h4>
+          <span>8 класс</span>
+        </div>
+
+        <div class="team-member">
+          <div class="avatar">
+            <img src="avatar4.JPG" alt="Димитриев Александр" class="clickable-img">
+          </div>
+          <h4>Димитриев Александр</h4>
+          <span>8 класс</span>
+        </div>
+
+        <div class="team-member">
+          <div class="avatar">
+            <img src="avatar5.JPG" alt="Богоявленов Егор" class="clickable-img">
+          </div>
+          <h4>Богоявленов Егор</h4>
+          <span>8 класс</span>
+        </div>
+
+        <div class="team-member">
+          <div class="avatar">
+            <img src="avatar_trener.JPG" alt="Никитина Ксения Борисовна" class="clickable-img">
+          </div>
+          <h4>Никитина К.Б.</h4>
+          <span>Тренер, педагог</span>
+        </div>
+
+      </div>
+
+      <div class="why-us">
+        <h3>Почему мы?</h3>
+        <ul class="why-list">
+          <li>Работающий прототип (MVP) с видео и результатами испытаний</li>
+          <li>Собственное ПО на Python: от картинки до G-code</li>
+          <li>Экономическая эффективность: 3 530 ₽ против 15–20 тыс. ₽</li>
+          <li>Готовность к тиражированию: детали печатаются на любом 3D-принтере</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>© 2026 Робот-этнохудожник «Элли». ГАНОУ «Эткер», г. Чебоксары.</p>
+    </div>
+  </footer>
+
+  <!-- ЛАЙТБОКС -->
+  <div class="lightbox" id="lightbox">
+    <img src="" alt="Увеличенное изображение" id="lightbox-img">
+  </div>
+
+  <!-- СКРИПТ ДЛЯ ОТКРЫТИЯ ФОТО -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const images = document.querySelectorAll('.clickable-img');
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+
+      images.forEach(img => {
+        img.addEventListener('click', function(e) {
+          e.preventDefault();
+          lightboxImg.src = this.src;
+          lightbox.classList.add('active');
+        });
+      });
+
+      lightbox.addEventListener('click', function() {
+        lightbox.classList.remove('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
